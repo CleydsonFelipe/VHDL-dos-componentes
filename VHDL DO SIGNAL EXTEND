@@ -1,0 +1,30 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity SignalExtend_ShiftLeft3 is
+    Port ( 
+        input_signal : in  STD_LOGIC_VECTOR(49 downto 0);
+        output_signal : out STD_LOGIC_VECTOR(63 downto 0)
+    );
+end SignalExtend_ShiftLeft3;
+
+architecture Behavioral of SignalExtend_ShiftLeft3 is
+    signal extended_signal : STD_LOGIC_VECTOR(63 downto 0);
+begin
+
+    -- Process to extend the input signal from 50 bits to 64 bits
+    process(input_signal)
+    begin
+        extended_signal <= (others => '0'); -- Initialize the extended signal with zeros
+        extended_signal(49 downto 0) <= input_signal; -- Copy the input signal to the lower 50 bits
+    end process;
+
+    -- Process to shift the extended signal left by 3 bits
+    process(extended_signal)
+    begin
+        output_signal <= extended_signal(60 downto 0) & "000"; -- Shift left by 3 bits and append three '0's
+    end process;
+
+end Behavioral;
