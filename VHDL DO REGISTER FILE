@@ -1,0 +1,59 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+ENTITY RegisterFile IS
+    PORT(
+        clk : IN STD_LOGIC;
+        reset : IN STD_LOGIC;
+        Reg_Write : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+        Write_Data : IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+        Read_Addr1, Read_Addr2 : IN STD_LOGIC_VECTOR(2 DOWNTO 0);
+        Read_Data1, Read_Data2 : OUT STD_LOGIC_VECTOR(7 DOWNTO 0)
+    );
+END RegisterFile;
+
+ARCHITECTURE behavior OF RegisterFile IS
+    SIGNAL R0, R1, R2, R3, R4, R5, R6, R7 : STD_LOGIC_VECTOR(7 DOWNTO 0);
+BEGIN
+    U0: ENTITY work.reg8
+        PORT MAP(clk, reset, Reg_Write(0), Write_Data, R0);
+    U1: ENTITY work.reg8
+        PORT MAP(clk, reset, Reg_Write(1), Write_Data, R1);
+    U2: ENTITY work.reg8
+        PORT MAP(clk, reset, Reg_Write(2), Write_Data, R2);
+    U3: ENTITY work.reg8
+        PORT MAP(clk, reset, Reg_Write(3), Write_Data, R3);
+    U4: ENTITY work.reg8
+        PORT MAP(clk, reset, Reg_Write(4), Write_Data, R4);
+    U5: ENTITY work.reg8
+        PORT MAP(clk, reset, Reg_Write(5), Write_Data, R5);
+    U6: ENTITY work.reg8
+        PORT MAP(clk, reset, Reg_Write(6), Write_Data, R6);
+    U7: ENTITY work.reg8
+        PORT MAP(clk, reset, Reg_Write(7), Write_Data, R7);
+
+    PROCESS(Read_Addr1, Read_Addr2, R0, R1, R2, R3, R4, R5, R6, R7)
+    BEGIN
+        CASE Read_Addr1 IS
+            WHEN "000" => Read_Data1 <= R0;
+            WHEN "001" => Read_Data1 <= R1;
+            WHEN "010" => Read_Data1 <= R2;
+            WHEN "011" => Read_Data1 <= R3;
+            WHEN "100" => Read_Data1 <= R4;
+            WHEN "101" => Read_Data1 <= R5;
+            WHEN "110" => Read_Data1 <= R6;
+            WHEN OTHERS => Read_Data1 <= R7;
+        END CASE;
+
+        CASE Read_Addr2 IS
+            WHEN "000" => Read_Data2 <= R0;
+            WHEN "001" => Read_Data2 <= R1;
+            WHEN "010" => Read_Data2 <= R2;
+            WHEN "011" => Read_Data2 <= R3;
+            WHEN "100" => Read_Data2 <= R4;
+            WHEN "101" => Read_Data2 <= R5;
+            WHEN "110" => Read_Data2 <= R6;
+            WHEN OTHERS => Read_Data2 <= R7;
+        END CASE;
+    END PROCESS;
+END behavior;
