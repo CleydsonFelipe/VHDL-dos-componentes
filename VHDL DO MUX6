@@ -1,0 +1,24 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity MUX6 is
+    Port ( sel_mux6 : in STD_LOGIC;
+           input0   : in STD_LOGIC_VECTOR(31 downto 0); -- PC+8
+           input1   : in STD_LOGIC_VECTOR(31 downto 0); -- PC+8+Offset
+           mux6_out : out STD_LOGIC_VECTOR(31 downto 0) -- Output to PC
+         );
+end MUX6;
+
+architecture Behavioral of MUX6 is
+begin
+    process(sel_mux6, input0, input1)
+    begin
+        if sel_mux6 = '0' then
+            mux6_out <= input0; -- Select PC+8
+        else
+            mux6_out <= input1; -- Select PC+8+Offset
+        end if;
+    end process;
+end Behavioral;
