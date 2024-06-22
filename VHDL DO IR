@@ -1,0 +1,30 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity IR is
+    Port ( clk       : in STD_LOGIC;
+           reset     : in STD_LOGIC;
+           IR_ld     : in STD_LOGIC;
+           opcode_in : in STD_LOGIC_VECTOR(31 downto 0); -- Opcode from program memory
+           opcode_out: out STD_LOGIC_VECTOR(31 downto 0) -- Output to control unit
+         );
+end IR;
+
+architecture Behavioral of IR is
+    signal ir_reg : STD_LOGIC_VECTOR(31 downto 0);
+begin
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            ir_reg <= (others => '0'); -- Reset the IR register
+        elsif rising_edge(clk) then
+            if IR_ld = '1' then
+                ir_reg <= opcode_in; -- Load the opcode into IR register
+            end if;
+        end if;
+    end process;
+
+    opcode_out <= ir_reg; -- Output the IR register value
+end Behavioral;
