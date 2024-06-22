@@ -1,0 +1,98 @@
+CÓDIGO VHDL DO COMPARADOR 
+
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.std_logic_unsigned.ALL;
+
+ENTITY Comparador IS
+    PORT(
+        Ra, Rb : IN STD_LOGIC_VECTOR(7 DOWNTO 0); -- Entradas dos registradores a serem comparados
+        Jump : IN STD_LOGIC_VECTOR(2 DOWNTO 0);    -- Sinal de controle de jump codificado
+        Branch : IN STD_LOGIC;                    -- Sinal de controle de branch
+        addr : IN STD_LOGIC_VECTOR(7 DOWNTO 0);   -- Endereço de salto
+        pc : OUT STD_LOGIC_VECTOR(7 DOWNTO 0);    -- Contador de programa (endereço de salto)
+        eq, gt, lt, ge, le : BUFFER STD_LOGIC     -- Sinais de saída para cada comparação
+    );
+END Comparador;
+
+ARCHITECTURE Behavioral OF Comparador IS
+    SIGNAL jump_condition_met : STD_LOGIC := '0';
+BEGIN
+    PROCESS(Ra, Rb, Jump, Branch, addr)
+    BEGIN
+        -- Inicializa os sinais de saída
+        eq <= '0';
+        gt <= '0';
+        lt <= '0';
+        ge <= '0';
+        le <= '0';
+        pc <= (OTHERS => '0');
+        jump_condition_met <= '0';
+
+        -- Comparações
+        IF Ra = Rb THEN
+            eq <= '1';
+        END IF;
+
+        IF Ra > Rb THEN
+            gt <= '1';
+        END IF;
+
+        IF Ra < Rb THEN
+            lt <= '1';
+        END IF;
+
+        IF Ra >= Rb THEN
+            ge <= '1';
+        END IF;
+
+        IF Ra <= Rb THEN
+            le <= '1';
+        END IF;
+
+        -- Decodificação do sinal de jump
+        CASE Jump IS
+            WHEN "000" => -- JZ: Salta se Ra = 0
+                IF eq = '1' THEN
+                    jump_condition_met <= '1';
+                END IF;
+            WHEN "001" => -- JNZ: Salta se Ra != 0
+                IF eq = '0' THEN
+                    jump_condition_met <= '1';
+                END IF;
+            WHEN "010" => -- JEQ: Salta se Ra = Rb
+                IF eq = '1' THEN
+                    jump_condition_met <= '1';
+                END IF;
+            WHEN "011" => -- JNE: Salta se Ra != Rb
+                IF eq = '0' THEN
+                    jump_condition_met <= '1';
+                END IF;
+            WHEN "100" => -- JG: Salta se Ra > Rb
+                IF gt = '1' THEN
+                    jump_condition_met <= '1';
+                END IF;
+            WHEN "101" => -- JL: Salta se Ra < Rb
+                IF lt = '1' THEN
+                    jump_condition_met <= '1';
+                END IF;
+            WHEN "110" => -- JGE: Salta se Ra >= Rb
+                IF ge = '1' THEN
+                    jump_condition_met <= '1';
+                END IF;
+            WHEN "111" => -- JLE: Salta se Ra <= Rb
+                IF le = '1' THEN
+                    jump_condition_met <= '1';
+                END IF;
+            WHEN OTHERS =>
+                jump_condition_met <= '0';
+        END CASE;
+
+        -- Lógica de salto
+        IF jump_condition_met = '1' THEN
+            pc <= addr;
+        ELSIF Branch = '1' THEN
+            -- Lógica de branch, se necessário
+        END IF;
+    END PROCESS;
+END Behavioral;
