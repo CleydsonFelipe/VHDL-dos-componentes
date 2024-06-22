@@ -1,0 +1,26 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+ENTITY Mux1 IS
+	PORT(
+	Mem_Write, ULA_Result, Mem_Read, MemToReg: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+	sel_mux1: IN STD_LOGIC_VECTOR (1 DOWNTO 0);
+	saida: OUT STD_LOGIC_VECTOR (7 DOWNTO 0));
+END Mux1;
+
+ARCHITECTURE model OF Mux1 IS
+BEGIN
+	proc: PROCESS(sel_mux1)
+	BEGIN
+		IF sel_mux1 = "00" THEN
+			saida <= Mem_Write;
+		elsif sel_mux1 = "01" THEN
+			saida <= ULA_Result;
+		elsif sel_mux1 = "10" THEN
+			saida <= Mem_Read;
+		elsif sel_mux1 = "11" THEN
+			saida <= MemToReg;
+		END IF;
+	END PROCESS proc;
+END model;
+
