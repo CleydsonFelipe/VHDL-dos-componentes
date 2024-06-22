@@ -1,0 +1,35 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_ARITH.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity PC is
+    Port ( clk      : in STD_LOGIC;
+           reset    : in STD_LOGIC;
+           PC_ld    : in STD_LOGIC;
+           PC_clr   : in STD_LOGIC;
+           PC_in    : in STD_LOGIC_VECTOR(31 downto 0);
+           PC_out   : out STD_LOGIC_VECTOR(31 downto 0)
+         );
+end PC;
+
+architecture Behavioral of PC is
+    signal pc_reg : STD_LOGIC_VECTOR(31 downto 0);
+begin
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            pc_reg <= (others => '0'); -- Reset the PC register
+        elsif rising_edge(clk) then
+            if PC_clr = '1' then
+                pc_reg <= (others => '0'); -- Clear the PC register
+            elsif PC_ld = '1' then
+                pc_reg <= PC_in; -- Load the PC register with new value
+            else
+                pc_reg <= pc_reg + 8; -- Increment the PC by 8
+            end if;
+        end if;
+    end process;
+
+    PC_out <= pc_reg; -- Output the PC register value
+end Behavioral;
