@@ -1,0 +1,34 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+
+ENTITY Mux3 IS
+    PORT(
+        R0, R1, R2, R3, R4, R5, R6, R7: IN STD_LOGIC_VECTOR (7 DOWNTO 0);
+        sel_mux3: IN STD_LOGIC_VECTOR (2 DOWNTO 0);
+        saida: OUT STD_LOGIC_VECTOR (7 DOWNTO 0)
+    );
+END Mux3;
+
+ARCHITECTURE model OF Mux3 IS
+BEGIN
+    proc: PROCESS(R0, R1, R2, R3, R4, R5, R6, R7, sel_mux3)
+    BEGIN
+        IF sel_mux3 = "000" THEN
+            saida <= R0;
+        ELSIF sel_mux3 = "001" THEN
+            saida <= R1;
+        ELSIF sel_mux3 = "010" THEN
+            saida <= R2;
+        ELSIF sel_mux3 = "011" THEN
+            saida <= R3;
+        ELSIF sel_mux3 = "100" THEN
+            saida <= R4;
+        ELSIF sel_mux3 = "101" THEN
+            saida <= R5;
+        ELSIF sel_mux3 = "110" THEN
+            saida <= R6;
+        ELSIF sel_mux3 = "111" THEN
+            saida <= R7;    
+        END IF;
+    END PROCESS proc;
+END model;
