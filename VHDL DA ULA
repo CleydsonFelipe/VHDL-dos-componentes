@@ -1,0 +1,77 @@
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
+
+ENTITY ULA IS
+    PORT(
+        A, B : IN STD_LOGIC_VECTOR(41 DOWNTO 0); -- Entrada A tem até 42 bits, e B tem 8 bits
+        ULA_C : IN STD_LOGIC_VECTOR(5 DOWNTO 0); -- Código da operação (opcode)
+        Resultado : OUT STD_LOGIC_VECTOR(41 DOWNTO 0); -- Saída do resultado da ULA
+        Zero : OUT STD_LOGIC -- Indicador de resultado zero
+    );
+END ULA;
+
+ARCHITECTURE Behavior OF ULA IS
+    SIGNAL A_int, B_int, Res_int : SIGNED(41 DOWNTO 0);
+BEGIN
+    PROCESS(A, B, ULA_C)
+    BEGIN
+        A_int <= SIGNED(A);
+        B_int <= RESIZE(SIGNED(B), 42); -- Ajustar B para 42 bits
+        CASE ULA_C IS
+            WHEN "000000" => -- ADD
+                Res_int <= A_int + B_int;
+            WHEN "000001" => -- SUB
+                Res_int <= A_int - B_int;
+            WHEN "000010" => -- MUL
+                Res_int <= A_int * B_int;
+            WHEN "000011" => -- DIV
+                IF B_int /= 0 THEN
+                    Res_int <= A_int / B_int;
+                ELSE
+                    Res_int <= (OTHERS => '0'); -- Tratar divisão por zero
+                END IF;
+            WHEN "000100" => -- ADDI
+                Res_int <= A_int + B_int;
+            WHEN "000101" => -- SUBI
+                Res_int <= A_int - B_int;
+            WHEN "000110" => -- MULI
+                Res_int <= A_int * B_int;
+            WHEN "000111" => -- DIVI
+                IF B_int /= 0 THEN
+                    Res_int <= A_int / B_int;
+                ELSE
+                    Res_int <= (OTHERS => '0'); -- Tratar divisão por zero
+                END IF;
+            WHEN "001000" => -- MOD
+                IF B_int /= 0 THEN
+                    Res_int <= A_int MOD B_int;
+                ELSE
+                    Res_int <= (OTHERS => '0'); -- Tratar divisão por zero
+                END IF;
+            WHEN "001001" => -- INC
+                Res_int <= A_int + 1;
+            WHEN "001010" => -- DEC
+                Res_int <= A_int - 1;
+            WHEN "001011" => -- AND
+                Res_int <= A_int AND B_int;
+            WHEN "001100" => -- OR
+                Res_int <= A_int OR B_int;
+            WHEN "001101" => -- XOR
+                Res_int <= A_int XOR B_int;
+            WHEN "001110" => -- NOT
+                Res_int <= NOT A_int;
+            WHEN "001111" => -- ANDI
+                Res_int <= A_int AND B_int;
+            WHEN "010000" => -- ORI
+                Res_int <= A_int OR B_int;
+            WHEN "010001" => -- XORI
+                Res_int <= A_int XOR B_int;
+            WHEN OTHERS =>
+                Res_int <= (OTHERS => '0'); -- Operação padrão
+        END CASE;
+    END PROCESS;
+
+    Resultado <= STD_LOGIC_VECTOR(Res_int);
+    Zero <= '1' WHEN Res_int = 0 ELSE '0';
+END Behavior;
